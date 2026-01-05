@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Package, ShoppingCart, LogOut, Edit, Trash2, Eye, Link, Settings, Save, DollarSign, TrendingUp, Plug, CreditCard, LayoutDashboard } from "lucide-react";
+import { Plus, Package, ShoppingCart, LogOut, Edit, Trash2, Eye, Link, Settings, Save, DollarSign, TrendingUp, Plug, CreditCard, LayoutDashboard, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NeonButton } from "@/components/ui/neon-button";
 import { InteractiveMenu, InteractiveMenuItem } from "@/components/ui/modern-mobile-menu";
@@ -34,6 +34,8 @@ interface Product {
   price: number;
   currency: string;
   image_url: string | null;
+  banner_url: string | null;
+  slug: string | null;
   stripe_price_id: string | null;
   stripe_product_id: string | null;
   is_active: boolean;
@@ -77,6 +79,8 @@ const Admin = () => {
     price: "",
     currency: "EUR",
     image_url: "",
+    banner_url: "",
+    slug: "",
   });
 
   useEffect(() => {
@@ -135,6 +139,8 @@ const Admin = () => {
       price: parseFloat(formData.price),
       currency: formData.currency,
       image_url: formData.image_url || null,
+      banner_url: formData.banner_url || null,
+      slug: formData.slug || null,
     };
 
     try {
@@ -197,6 +203,8 @@ const Admin = () => {
       price: product.price.toString(),
       currency: product.currency,
       image_url: product.image_url || "",
+      banner_url: product.banner_url || "",
+      slug: product.slug || "",
     });
     setIsDialogOpen(true);
   };
@@ -209,11 +217,14 @@ const Admin = () => {
       price: "",
       currency: "EUR",
       image_url: "",
+      banner_url: "",
+      slug: "",
     });
   };
 
-  const copyCheckoutLink = (productId: string) => {
-    const url = `${window.location.origin}/checkout/${productId}`;
+  const copyCheckoutLink = (product: Product) => {
+    const slug = product.slug || product.id;
+    const url = `${window.location.origin}/checkout/${slug}`;
     navigator.clipboard.writeText(url);
     toast.success("Enlace copiado al portapapeles");
   };
@@ -375,8 +386,17 @@ const Admin = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image_url">URL de Imagen</Label>
+                <Label htmlFor="slug">Slug (URL del producto)</Label>
+                <Input id="slug" value={formData.slug} onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} placeholder="mi-producto" />
+                <p className="text-xs text-muted-foreground">URL: /checkout/{formData.slug || 'mi-producto'}</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="image_url">URL de Imagen del Producto</Label>
                 <Input id="image_url" type="url" value={formData.image_url} onChange={(e) => setFormData({ ...formData, image_url: e.target.value })} placeholder="https://..." />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="banner_url">URL del Banner</Label>
+                <Input id="banner_url" type="url" value={formData.banner_url} onChange={(e) => setFormData({ ...formData, banner_url: e.target.value })} placeholder="https://..." />
               </div>
               <NeonButton type="submit" variant="solid" size="lg" className="w-full">
                 {editingProduct ? "Guardar Cambios" : "Crear Producto"}
@@ -393,7 +413,7 @@ const Admin = () => {
               <TableHead>Producto</TableHead>
               <TableHead>Precio</TableHead>
               <TableHead>Estado</TableHead>
-              <TableHead>Creado</TableHead>
+              <TableHead>Slug</TableHead>
               <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
@@ -422,12 +442,15 @@ const Admin = () => {
                   )}
                 </TableCell>
                 <TableCell className="text-muted-foreground text-sm">{formatDate(product.created_at)}</TableCell>
+                <TableCell>
+                  <code className="text-xs bg-muted px-2 py-1 rounded">{product.slug || product.id}</code>
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => copyCheckoutLink(product.id)} title="Copiar enlace de checkout">
-                      <Link className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" onClick={() => copyCheckoutLink(product)} title="Copiar enlace de checkout">
+                      <Copy className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => window.open(`/checkout/${product.id}`, "_blank")} title="Ver checkout">
+                    <Button variant="ghost" size="icon" onClick={() => window.open(`/checkout/${product.slug || product.id}`, "_blank")} title="Ver checkout">
                       <Eye className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(product)}>
@@ -442,7 +465,7 @@ const Admin = () => {
             ))}
             {products.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No hay productos. Crea tu primer producto.</TableCell>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No hay productos. Crea tu primer producto.</TableCell>
               </TableRow>
             )}
           </TableBody>
