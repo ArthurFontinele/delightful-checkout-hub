@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Package, ShoppingCart, LogOut, Edit, Trash2, Eye, Link } from "lucide-react";
+import { Plus, Package, ShoppingCart, LogOut, Edit, Trash2, Eye, Link, Settings, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,6 +58,8 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [tiktokPixelId, setTiktokPixelId] = useState("");
+  const [savingSettings, setSavingSettings] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -68,7 +70,36 @@ const Admin = () => {
 
   useEffect(() => {
     fetchData();
+    fetchSettings();
   }, []);
+
+  const fetchSettings = async () => {
+    const { data } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "tiktok_pixel_id")
+      .single();
+    
+    if (data?.value) {
+      setTiktokPixelId(data.value);
+    }
+  };
+
+  const saveSettings = async () => {
+    setSavingSettings(true);
+    try {
+      const { error } = await supabase
+        .from("settings")
+        .upsert({ key: "tiktok_pixel_id", value: tiktokPixelId }, { onConflict: "key" });
+      
+      if (error) throw error;
+      toast.success("Configuración guardada");
+    } catch (error: any) {
+      toast.error("Error al guardar la configuración");
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -269,9 +300,10 @@ const Admin = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-md grid-cols-3">
             <TabsTrigger value="products">Productos</TabsTrigger>
             <TabsTrigger value="orders">Pedidos</TabsTrigger>
+            <TabsTrigger value="settings">Configuración</TabsTrigger>
           </TabsList>
 
           <TabsContent value="products" className="space-y-4">
@@ -491,6 +523,58 @@ const Admin = () => {
                   )}
                 </TableBody>
               </Table>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-4">
+            <h2 className="text-xl font-bold text-foreground">Configuración</h2>
+
+            <Card className="card-shadow">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  TikTok Pixel
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="tiktok_pixel">ID del Pixel de TikTok</Label>
+                  <Input
+                    id="tiktok_pixel"
+                    value={tiktokPixelId}
+                    onChange={(e) => setTiktokPixelId(e.target.value)}
+                    placeholder="Ej: XXXXXXXXXXXXXXXXXX"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Encuentra tu Pixel ID en TikTok Ads Manager → Herramientas → Eventos
+                  </p>
+                </div>
+                <Button onClick={saveSettings} disabled={savingSettings}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {savingSettings ? "Guardando..." : "Guardar Configuración"}
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="card-shadow">
+              <CardHeader>
+                <CardTitle>Integración con Stripe</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  <strong className="text-foreground">Eventos automáticos:</strong> El pixel rastrea automáticamente:
+                </p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li><code className="bg-muted px-1 rounded">PageView</code> - Cuando el usuario visita la página</li>
+                  <li><code className="bg-muted px-1 rounded">InitiateCheckout</code> - Cuando el usuario inicia el checkout</li>
+                  <li><code className="bg-muted px-1 rounded">CompletePayment</code> - Cuando se completa el pago</li>
+                </ul>
+                <p className="pt-2">
+                  <strong className="text-foreground">Para tracking server-side con Stripe:</strong> Configura un webhook de Stripe 
+                  que envíe eventos a la API de TikTok Events cuando se complete un pago. Esto es más preciso 
+                  que el tracking del navegador.
+                </p>
+              </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
