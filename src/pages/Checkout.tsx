@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Shield, CheckCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useTikTokPixel } from "@/hooks/useTikTokPixel";
-
+import CheckoutBanner from "@/components/CheckoutBanner";
 interface Product {
   id: string;
   name: string;
@@ -154,40 +154,10 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="gradient-header py-4 px-6">
-        <h1 className="text-center text-lg font-bold text-primary-foreground">
-          Pago Seguro y Rápido
-        </h1>
-      </header>
-
-      {/* Banner */}
-      {product.banner_url && (
-        <div className="w-full">
-          <img
-            src={product.banner_url}
-            alt="Banner"
-            className="w-full h-auto object-cover"
-          />
-        </div>
-      )}
+      {/* Checkout Banner */}
+      <CheckoutBanner saldo={formatPrice(product.price, product.currency)} />
 
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
-        {/* Trust Banner */}
-        <div className="bg-primary/10 rounded-xl p-3 flex items-center gap-3 animate-fade-in">
-          <div className="bg-primary rounded-lg p-2">
-            <Shield className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">
-              Confirmación instantánea • Procesamiento rápido
-            </p>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <CheckCircle className="h-3 w-3 text-success" />
-              Transacción Segura
-            </p>
-          </div>
-        </div>
 
         {/* Product Card */}
         <div className="bg-card rounded-2xl card-shadow p-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
