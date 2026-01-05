@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Package, ShoppingCart, LogOut, Edit, Trash2, Eye, Link, Settings, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { NeonButton } from "@/components/ui/neon-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -314,10 +315,10 @@ const Admin = () => {
                 if (!open) resetForm();
               }}>
                 <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
+                  <NeonButton variant="solid" size="lg" className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
                     Nuevo Producto
-                  </Button>
+                  </NeonButton>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
@@ -375,9 +376,9 @@ const Admin = () => {
                         placeholder="https://..."
                       />
                     </div>
-                    <Button type="submit" className="w-full">
+                    <NeonButton type="submit" variant="solid" size="lg" className="w-full">
                       {editingProduct ? "Guardar Cambios" : "Crear Producto"}
-                    </Button>
+                    </NeonButton>
                   </form>
                 </DialogContent>
               </Dialog>
@@ -549,10 +550,10 @@ const Admin = () => {
                     Encuentra tu Pixel ID en TikTok Ads Manager → Herramientas → Eventos
                   </p>
                 </div>
-                <Button onClick={saveSettings} disabled={savingSettings}>
-                  <Save className="h-4 w-4 mr-2" />
+                <NeonButton onClick={saveSettings} disabled={savingSettings} variant="solid" size="lg" className="flex items-center gap-2">
+                  <Save className="h-4 w-4" />
                   {savingSettings ? "Guardando..." : "Guardar Configuración"}
-                </Button>
+                </NeonButton>
               </CardContent>
             </Card>
 
