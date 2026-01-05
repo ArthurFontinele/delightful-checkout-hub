@@ -21,6 +21,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         success:
           "bg-success text-success-foreground hover:bg-success/90 active:scale-[0.98]",
+        tiktok:
+          "bg-tiktok text-tiktok-foreground hover:bg-tiktok/90 font-bold uppercase tracking-wide active:scale-[0.98] font-tiktok shadow-lg",
         checkout:
           "bg-primary text-primary-foreground hover:bg-primary/90 button-shadow font-bold uppercase tracking-wide active:scale-[0.98]",
       },
