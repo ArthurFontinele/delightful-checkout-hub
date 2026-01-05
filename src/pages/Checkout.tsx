@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Shield, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,14 +21,37 @@ interface Product {
 
 const Checkout = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [hasShownExitOffer, setHasShownExitOffer] = useState(false);
   const { trackInitiateCheckout, trackPageView } = useTikTokPixel();
   const [formData, setFormData] = useState({
     email: "",
     name: "",
   });
+
+  // Handle back button interception
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (!hasShownExitOffer) {
+        event.preventDefault();
+        setHasShownExitOffer(true);
+        // Push current state back and navigate to exit offer
+        window.history.pushState(null, "", window.location.href);
+        navigate(`/oferta-especial?returnUrl=${encodeURIComponent(window.location.pathname)}`);
+      }
+    };
+
+    // Push initial state to enable back button detection
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [hasShownExitOffer, navigate]);
 
   useEffect(() => {
     const fetchProduct = async () => {
