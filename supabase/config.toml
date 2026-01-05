@@ -1,1 +1,7 @@
 project_id = "vcfraxbzcwpqopopkdwn"
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.create-stripe-product]
+verify_jwt = false
