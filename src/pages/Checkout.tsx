@@ -14,10 +14,12 @@ interface Product {
   price: number;
   currency: string;
   image_url: string | null;
+  banner_url: string | null;
+  slug: string | null;
 }
 
 const Checkout = () => {
-  const { productId } = useParams<{ productId: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -28,7 +30,7 @@ const Checkout = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!productId) {
+      if (!slug) {
         setLoading(false);
         return;
       }
@@ -36,13 +38,13 @@ const Checkout = () => {
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("id", productId)
+        .eq("slug", slug)
         .eq("is_active", true)
         .single();
 
       if (error) {
         console.error("Error fetching product:", error);
-        toast.error("Producto no encontrado");
+        toast.error("Produto não encontrado");
       } else {
         setProduct(data);
       }
@@ -50,18 +52,18 @@ const Checkout = () => {
     };
 
     fetchProduct();
-  }, [productId]);
+  }, [slug]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.email || !formData.name) {
-      toast.error("Por favor complete todos los campos");
+      toast.error("Por favor preencha todos os campos");
       return;
     }
 
     if (!product) {
-      toast.error("Producto no encontrado");
+      toast.error("Produto não encontrado");
       return;
     }
 
@@ -81,18 +83,18 @@ const Checkout = () => {
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        throw new Error("No se pudo crear la sesión de pago");
+        throw new Error("Não foi possível criar a sessão de pagamento");
       }
     } catch (error: any) {
       console.error("Error creating checkout:", error);
-      toast.error(error.message || "Error al procesar el pago");
+      toast.error(error.message || "Erro ao processar o pagamento");
     } finally {
       setProcessing(false);
     }
   };
 
   const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat("es-ES", {
+    return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: currency,
     }).format(price);
@@ -110,8 +112,8 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Producto no encontrado</h1>
-          <p className="text-muted-foreground">El producto que buscas no está disponible.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Produto não encontrado</h1>
+          <p className="text-muted-foreground">O produto que você procura não está disponível.</p>
         </div>
       </div>
     );
@@ -122,9 +124,20 @@ const Checkout = () => {
       {/* Header */}
       <header className="gradient-header py-4 px-6">
         <h1 className="text-center text-lg font-bold text-primary-foreground">
-          Pago Seguro y Rápido
+          Pagamento Seguro e Rápido
         </h1>
       </header>
+
+      {/* Banner */}
+      {product.banner_url && (
+        <div className="w-full">
+          <img
+            src={product.banner_url}
+            alt="Banner"
+            className="w-full h-auto object-cover"
+          />
+        </div>
+      )}
 
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
         {/* Trust Banner */}
@@ -134,11 +147,11 @@ const Checkout = () => {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-foreground">
-              Confirmación instantánea
+              Confirmação instantânea • PIX cai em até 2 minutos
             </p>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <CheckCircle className="h-3 w-3 text-success" />
-              Transacción Segura
+              Transação Segura
             </p>
           </div>
         </div>
@@ -150,7 +163,7 @@ const Checkout = () => {
               <img
                 src={product.image_url}
                 alt={product.name}
-                className="w-16 h-16 rounded-xl object-cover"
+                className="w-16 h-16 rounded-xl object-cover bg-foreground"
               />
             ) : (
               <div className="w-16 h-16 rounded-xl bg-muted flex items-center justify-center">
@@ -160,13 +173,13 @@ const Checkout = () => {
             <div className="flex-1">
               <h2 className="font-bold text-foreground">{product.name}</h2>
               {product.description && (
-                <p className="text-sm text-muted-foreground">{product.description}</p>
+                <p className="text-sm text-primary">{product.description}</p>
               )}
             </div>
           </div>
 
           <div className="mt-4 pt-4 border-t border-border flex justify-between items-center">
-            <span className="text-primary font-medium">Total</span>
+            <span className="text-muted-foreground font-medium">Total</span>
             <span className="text-xl font-bold text-foreground">
               {formatPrice(product.price, product.currency)}
             </span>
@@ -179,17 +192,17 @@ const Checkout = () => {
             <div className="bg-primary/10 rounded-lg p-2">
               <span className="text-lg">👤</span>
             </div>
-            <h3 className="font-bold text-foreground">Identificación</h3>
+            <h3 className="font-bold text-foreground">Identificação</h3>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="email" className="text-primary font-medium">
-              Correo electrónico
+              Email
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="correo@ejemplo.com"
+              placeholder="Email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               className="h-12 bg-background border-border"
@@ -199,12 +212,12 @@ const Checkout = () => {
 
           <div className="space-y-2">
             <Label htmlFor="name" className="text-primary font-medium">
-              Nombre completo
+              Nome completo
             </Label>
             <Input
               id="name"
               type="text"
-              placeholder="Nombre y apellido"
+              placeholder="Nome e sobrenome"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="h-12 bg-background border-border"
@@ -222,15 +235,15 @@ const Checkout = () => {
             {processing ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
-                Procesando...
+                Processando...
               </>
             ) : (
-              "PAGAR AHORA"
+              "PAGAR AGORA"
             )}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground mt-4">
-            Al finalizar el pago acepta nuestros términos de uso y privacidad.
+            Ao finalizar o pagamento você aceita nossos termos de uso e privacidade.
           </p>
         </form>
       </div>
