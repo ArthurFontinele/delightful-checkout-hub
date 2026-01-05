@@ -84,6 +84,7 @@ export type Database = {
       }
       products: {
         Row: {
+          banner_url: string | null
           created_at: string
           currency: string
           description: string | null
@@ -92,11 +93,13 @@ export type Database = {
           is_active: boolean
           name: string
           price: number
+          slug: string | null
           stripe_price_id: string | null
           stripe_product_id: string | null
           updated_at: string
         }
         Insert: {
+          banner_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
@@ -105,11 +108,13 @@ export type Database = {
           is_active?: boolean
           name: string
           price: number
+          slug?: string | null
           stripe_price_id?: string | null
           stripe_product_id?: string | null
           updated_at?: string
         }
         Update: {
+          banner_url?: string | null
           created_at?: string
           currency?: string
           description?: string | null
@@ -118,6 +123,7 @@ export type Database = {
           is_active?: boolean
           name?: string
           price?: number
+          slug?: string | null
           stripe_price_id?: string | null
           stripe_product_id?: string | null
           updated_at?: string
