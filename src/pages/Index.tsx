@@ -12,6 +12,7 @@ interface Product {
   price: number;
   currency: string;
   image_url: string | null;
+  slug: string | null;
 }
 
 const Index = () => {
@@ -35,7 +36,7 @@ const Index = () => {
   }, []);
 
   const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat("es-ES", {
+    return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: currency,
     }).format(price);
@@ -50,7 +51,7 @@ const Index = () => {
             <div className="bg-primary-foreground/20 rounded-xl p-2">
               <ShoppingBag className="h-6 w-6 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-bold text-primary-foreground">Mi Tienda</h1>
+            <h1 className="text-xl font-bold text-primary-foreground">Minha Loja</h1>
           </div>
           <Link to="/admin">
             <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/10">
@@ -65,14 +66,14 @@ const Index = () => {
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 animate-fade-in">
-            Bienvenido a Nuestra Tienda
+            Bem-vindo à Nossa Loja
           </h2>
           <p className="text-lg text-muted-foreground mb-8 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Explora nuestros productos y realiza pagos seguros con Stripe
+            Explore nossos produtos e realize pagamentos seguros com Stripe
           </p>
           <Link to="/admin">
             <Button size="lg" className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-              Administrar Productos
+              Administrar Produtos
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </Link>
@@ -82,7 +83,7 @@ const Index = () => {
       {/* Products */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <h3 className="text-2xl font-bold text-foreground mb-8">Productos Disponibles</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-8">Produtos Disponíveis</h3>
           
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -102,14 +103,14 @@ const Index = () => {
                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                   <ShoppingBag className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h4 className="text-lg font-semibold text-foreground mb-2">No hay productos</h4>
+                <h4 className="text-lg font-semibold text-foreground mb-2">Não há produtos</h4>
                 <p className="text-muted-foreground mb-6">
-                  Crea tu primer producto desde el panel de administración
+                  Crie seu primeiro produto no painel de administração
                 </p>
                 <Link to="/admin">
                   <Button>
                     <Settings className="h-4 w-4 mr-2" />
-                    Ir al Panel de Admin
+                    Ir ao Painel Admin
                   </Button>
                 </Link>
               </CardContent>
@@ -144,7 +145,7 @@ const Index = () => {
                       <span className="text-xl font-bold text-primary">
                         {formatPrice(product.price, product.currency)}
                       </span>
-                      <Link to={`/checkout/${product.id}`}>
+                      <Link to={`/checkout/${product.slug || product.id}`}>
                         <Button size="sm">Comprar</Button>
                       </Link>
                     </div>
