@@ -160,7 +160,7 @@ const Checkout = () => {
       <div className="max-w-md mx-auto px-4 py-6 space-y-4">
 
         {/* Product Card */}
-        <div className="bg-card rounded-2xl card-shadow p-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        <div className="bg-card rounded-2xl card-shadow p-6 animate-slide-up font-tiktok" style={{ animationDelay: "0.1s" }}>
           <div className="flex items-center gap-4">
             {product.image_url ? (
               <img
@@ -175,9 +175,6 @@ const Checkout = () => {
             )}
             <div className="flex-1">
               <h2 className="font-bold text-foreground">{product.name}</h2>
-              {product.description && (
-                <p className="text-sm text-primary">{product.description}</p>
-              )}
             </div>
           </div>
 
@@ -190,16 +187,16 @@ const Checkout = () => {
         </div>
 
         {/* Identification Form */}
-        <form onSubmit={handleSubmit} className="bg-card rounded-2xl card-shadow p-6 space-y-4 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+        <form onSubmit={handleSubmit} className="bg-card rounded-2xl card-shadow p-6 space-y-4 animate-slide-up font-tiktok" style={{ animationDelay: "0.2s" }}>
           <div className="flex items-center gap-3 mb-4">
-            <div className="bg-primary/10 rounded-lg p-2">
+            <div className="bg-tiktok/10 rounded-lg p-2">
               <span className="text-lg">👤</span>
             </div>
             <h3 className="font-bold text-foreground">Identificación</h3>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-primary font-medium">
+            <Label htmlFor="email" className="text-tiktok font-medium">
               Email
             </Label>
             <Input
@@ -214,7 +211,7 @@ const Checkout = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-primary font-medium">
+            <Label htmlFor="name" className="text-tiktok font-medium">
               Nombre completo
             </Label>
             <Input
@@ -230,7 +227,7 @@ const Checkout = () => {
 
           <Button
             type="submit"
-            variant="checkout"
+            variant="tiktok"
             size="xl"
             className="w-full mt-6"
             disabled={processing}
@@ -241,7 +238,7 @@ const Checkout = () => {
                 Procesando...
               </>
             ) : (
-              "PAGAR AHORA"
+              "PAGAR Y RECIBIR SALDO"
             )}
           </Button>
 

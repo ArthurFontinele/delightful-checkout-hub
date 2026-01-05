@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+        tiktok: ["Poppins", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -38,6 +39,10 @@ export default {
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
+        },
+        tiktok: {
+          DEFAULT: "hsl(var(--tiktok))",
+          foreground: "hsl(var(--tiktok-foreground))",
         },
         warning: {
           DEFAULT: "hsl(var(--warning))",

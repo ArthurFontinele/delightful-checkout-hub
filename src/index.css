@@ -43,6 +43,10 @@
 
     --radius: 0.75rem;
 
+    /* TikTok brand color */
+    --tiktok: 351 86% 53%;
+    --tiktok-foreground: 0 0% 100%;
+
     /* Custom tokens */
     --header-gradient: linear-gradient(135deg, hsl(187 85% 53%) 0%, hsl(187 70% 45%) 100%);
     --card-shadow: 0 4px 20px -4px hsl(222 47% 11% / 0.08);
@@ -91,6 +95,10 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 187 85% 53%;
+
+    /* TikTok brand color */
+    --tiktok: 351 86% 53%;
+    --tiktok-foreground: 0 0% 100%;
 
     --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 240 5% 96%;
