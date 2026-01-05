@@ -1,9 +1,18 @@
+import { useEffect } from "react";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTikTokPixel } from "@/hooks/useTikTokPixel";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { trackCompletePayment } = useTikTokPixel();
+
+  useEffect(() => {
+    // Track CompletePayment event when page loads
+    trackCompletePayment();
+  }, [trackCompletePayment]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">

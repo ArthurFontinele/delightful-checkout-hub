@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useTikTokPixel } from "@/hooks/useTikTokPixel";
 
 interface Product {
   id: string;
@@ -23,6 +24,7 @@ const Checkout = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const { trackInitiateCheckout, trackPageView } = useTikTokPixel();
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -68,6 +70,14 @@ const Checkout = () => {
     }
 
     setProcessing(true);
+
+    // Track InitiateCheckout event
+    trackInitiateCheckout({
+      content_id: product.id,
+      content_name: product.name,
+      value: product.price,
+      currency: product.currency,
+    });
 
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
