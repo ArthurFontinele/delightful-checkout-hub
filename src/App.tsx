@@ -9,6 +9,7 @@ import Admin from "./pages/Admin";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
 import ExitOffer from "./pages/ExitOffer";
+import SpecialOfferCheckout from "./pages/SpecialOfferCheckout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path="/payment-canceled" element={<PaymentCanceled />} />
-          <Route path="/oferta-especial" element={<ExitOffer />} />
+          <Route path="/oferta-especial" element={<SpecialOfferCheckout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
