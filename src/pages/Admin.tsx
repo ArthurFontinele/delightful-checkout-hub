@@ -71,6 +71,7 @@ const Admin = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [tiktokPixelId, setTiktokPixelId] = useState("");
+  const [siteUrl, setSiteUrl] = useState("");
   const [savingSettings, setSavingSettings] = useState(false);
   const [activeSection, setActiveSection] = useState("dashboard");
   const [formData, setFormData] = useState({
@@ -91,12 +92,18 @@ const Admin = () => {
   const fetchSettings = async () => {
     const { data } = await supabase
       .from("settings")
-      .select("value")
-      .eq("key", "tiktok_pixel_id")
-      .single();
+      .select("key, value")
+      .in("key", ["tiktok_pixel_id", "site_url"]);
     
-    if (data?.value) {
-      setTiktokPixelId(data.value);
+    if (data) {
+      data.forEach((setting) => {
+        if (setting.key === "tiktok_pixel_id" && setting.value) {
+          setTiktokPixelId(setting.value);
+        }
+        if (setting.key === "site_url" && setting.value) {
+          setSiteUrl(setting.value);
+        }
+      });
     }
   };
 
@@ -105,7 +112,10 @@ const Admin = () => {
     try {
       const { error } = await supabase
         .from("settings")
-        .upsert({ key: "tiktok_pixel_id", value: tiktokPixelId }, { onConflict: "key" });
+        .upsert([
+          { key: "tiktok_pixel_id", value: tiktokPixelId },
+          { key: "site_url", value: siteUrl }
+        ], { onConflict: "key" });
       
       if (error) throw error;
       toast.success("Configuración guardada");
@@ -224,7 +234,9 @@ const Admin = () => {
 
   const copyCheckoutLink = (product: Product) => {
     const slug = product.slug || product.id;
-    const url = `${window.location.origin}/checkout/${slug}`;
+    const baseUrl = siteUrl || window.location.origin;
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    const url = `${cleanBaseUrl}/checkout/${slug}`;
     navigator.clipboard.writeText(url);
     toast.success("Enlace copiado al portapapeles");
   };
@@ -634,6 +646,27 @@ const Admin = () => {
       <Card className="card-shadow">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
+            <Link className="h-5 w-5" />
+            URL del Sitio
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="site_url">URL Base del Sitio (para copiar links)</Label>
+            <Input
+              id="site_url"
+              value={siteUrl}
+              onChange={(e) => setSiteUrl(e.target.value)}
+              placeholder="https://tu-dominio.lovableproject.com"
+            />
+            <p className="text-sm text-muted-foreground">Esta URL se usará para generar los enlaces de checkout. Usa tu URL publicada o de preview.</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="card-shadow">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
             TikTok Pixel
           </CardTitle>
@@ -649,12 +682,13 @@ const Admin = () => {
             />
             <p className="text-sm text-muted-foreground">Encuentra tu Pixel ID en TikTok Ads Manager → Herramientas → Eventos</p>
           </div>
-          <NeonButton onClick={saveSettings} disabled={savingSettings} variant="solid" size="lg" className="flex items-center gap-2">
-            <Save className="h-4 w-4" />
-            {savingSettings ? "Guardando..." : "Guardar Configuración"}
-          </NeonButton>
         </CardContent>
       </Card>
+
+      <NeonButton onClick={saveSettings} disabled={savingSettings} variant="solid" size="lg" className="flex items-center gap-2">
+        <Save className="h-4 w-4" />
+        {savingSettings ? "Guardando..." : "Guardar Configuración"}
+      </NeonButton>
 
       <Card className="card-shadow">
         <CardHeader>
