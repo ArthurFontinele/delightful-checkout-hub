@@ -44,7 +44,7 @@ const Checkout = () => {
 
       if (error) {
         console.error("Error fetching product:", error);
-        toast.error("Produto não encontrado");
+        toast.error("Producto no encontrado");
       } else {
         setProduct(data);
       }
@@ -58,12 +58,12 @@ const Checkout = () => {
     e.preventDefault();
     
     if (!formData.email || !formData.name) {
-      toast.error("Por favor preencha todos os campos");
+      toast.error("Por favor completa todos los campos");
       return;
     }
 
     if (!product) {
-      toast.error("Produto não encontrado");
+      toast.error("Producto no encontrado");
       return;
     }
 
@@ -83,18 +83,18 @@ const Checkout = () => {
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        throw new Error("Não foi possível criar a sessão de pagamento");
+        throw new Error("No fue posible crear la sesión de pago");
       }
     } catch (error: any) {
       console.error("Error creating checkout:", error);
-      toast.error(error.message || "Erro ao processar o pagamento");
+      toast.error(error.message || "Error al procesar el pago");
     } finally {
       setProcessing(false);
     }
   };
 
   const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat("pt-BR", {
+    return new Intl.NumberFormat("es-ES", {
       style: "currency",
       currency: currency,
     }).format(price);
@@ -112,8 +112,8 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-2">Produto não encontrado</h1>
-          <p className="text-muted-foreground">O produto que você procura não está disponível.</p>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Producto no encontrado</h1>
+          <p className="text-muted-foreground">El producto que buscas no está disponible.</p>
         </div>
       </div>
     );
@@ -124,7 +124,7 @@ const Checkout = () => {
       {/* Header */}
       <header className="gradient-header py-4 px-6">
         <h1 className="text-center text-lg font-bold text-primary-foreground">
-          Pagamento Seguro e Rápido
+          Pago Seguro y Rápido
         </h1>
       </header>
 
@@ -147,11 +147,11 @@ const Checkout = () => {
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-foreground">
-              Confirmação instantânea • PIX cai em até 2 minutos
+              Confirmación instantánea • Procesamiento rápido
             </p>
             <p className="text-xs text-muted-foreground flex items-center gap-1">
               <CheckCircle className="h-3 w-3 text-success" />
-              Transação Segura
+              Transacción Segura
             </p>
           </div>
         </div>
@@ -192,7 +192,7 @@ const Checkout = () => {
             <div className="bg-primary/10 rounded-lg p-2">
               <span className="text-lg">👤</span>
             </div>
-            <h3 className="font-bold text-foreground">Identificação</h3>
+            <h3 className="font-bold text-foreground">Identificación</h3>
           </div>
 
           <div className="space-y-2">
@@ -212,12 +212,12 @@ const Checkout = () => {
 
           <div className="space-y-2">
             <Label htmlFor="name" className="text-primary font-medium">
-              Nome completo
+              Nombre completo
             </Label>
             <Input
               id="name"
               type="text"
-              placeholder="Nome e sobrenome"
+              placeholder="Nombre y apellido"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="h-12 bg-background border-border"
@@ -235,15 +235,15 @@ const Checkout = () => {
             {processing ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
-                Processando...
+                Procesando...
               </>
             ) : (
-              "PAGAR AGORA"
+              "PAGAR AHORA"
             )}
           </Button>
 
           <p className="text-xs text-center text-muted-foreground mt-4">
-            Ao finalizar o pagamento você aceita nossos termos de uso e privacidade.
+            Al finalizar el pago aceptas nuestros términos de uso y privacidad.
           </p>
         </form>
       </div>
